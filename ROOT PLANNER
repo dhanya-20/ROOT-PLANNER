@@ -1,0 +1,49 @@
+import heapq
+
+def dijkstra(graph, start, end):
+    # Priority queue for the shortest path
+    pq = [(0, start)]  
+    distances = {node: float('inf') for node in graph}  
+    distances[start] = 0  
+    previous_nodes = {}  
+
+    while pq:
+        current_distance, current_node = heapq.heappop(pq)
+
+        if current_node == end:
+            break  
+
+        for neighbor, weight in graph[current_node].items():
+            distance = current_distance + weight
+
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                previous_nodes[neighbor] = current_node
+                heapq.heappush(pq, (distance, neighbor))
+
+    path, node = [], end
+    while node in previous_nodes:
+        path.insert(0, node)
+        node = previous_nodes[node]
+    if path:
+        path.insert(0, start)
+
+    return path, distances[end]
+
+# Example graph (city map with distances)
+graph = {
+    'A': {'B': 5, 'C': 10},
+    'B': {'A': 5, 'D': 7, 'E': 8},
+    'C': {'A': 10, 'F': 6},
+    'D': {'B': 7, 'E': 3, 'G': 4},
+    'E': {'B': 8, 'D': 3, 'H': 9},
+    'F': {'C': 6, 'I': 5},
+    'G': {'D': 4, 'H': 2},
+    'H': {'E': 9, 'G': 2, 'I': 7},
+    'I': {'F': 5, 'H': 7}
+}
+
+# Example: Find shortest route from A to I
+start, end = 'A', 'I'
+route, cost = dijkstra(graph, start, end)
+print(f"Shortest Route: {route}, Cost: {cost}")
